@@ -25,6 +25,8 @@ con.connect(function(err) {
 
     function createDatabase(){
 
+        console.log("Creating database")
+
         sqlQuery("CREATE DATABASE DuckDB");
 
         sqlQuery("USE DuckDB");
@@ -37,7 +39,7 @@ con.connect(function(err) {
 
         // read ducks.txt and insert them into ducks table
         
-        var array = fs.readFileSync('ducks.txt').toString().split("\n");
+        var array = fs.readFileSync('/app/ducks.txt').toString().split("\n");
         for(i in array) {
             sqlQuery("INSERT INTO names (id, name) VALUES (" + i + ", '" + array[i] + "');");
         }
@@ -51,27 +53,23 @@ con.connect(function(err) {
     //check if /var/lib/mysql/DuckDB exists
     fs.access("/var/lib/mysql/DuckDB", function(error) {
         if (error) {
-          console.log("Directory does not exist.")
-          createDatabase();
-        } else {
-          console.log("Directory exists.")
-          sqlQuery("USE DuckDB");
-            ducks = (sqlQuery("SELECT name FROM names"));
-            console.log(ducks[0]);
-        }
-      })
-
-    con.query("USE DuckDB", function (err, result) {
-        if (err){
-            console.log("error");
+            console.log("Directory does not exist.")
             createDatabase();
-        } 
-        else{
-            console.log("no error")
-            sqlQuery("USE DuckDB");
-            console.log("ready for requests");
+        } else {
+            console.log("Directory exists.")
+            // sqlQuery("USE DuckDB");
+            // ducks = (sqlQuery("SELECT name FROM names"));
+            // console.log(ducks);
+
+
+            con.query("SELECT name FROM DuckDB.names", function (err, result, fields) {
+                if (err) throw err;
+                console.log(result);
+            });
         }
-    });
+    })
+
+   
 
 });
 

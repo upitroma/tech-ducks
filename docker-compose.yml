@@ -12,6 +12,8 @@ services:
 
   web:
     build: ./frontend
+    volumes:
+      - ./backend/db:/var/lib/mysql
     restart: always
     ports:
       - 80:3000
