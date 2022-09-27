@@ -1,8 +1,10 @@
 const express = require('express');
-
 var mysql = require('mysql');
 var fs = require('fs');
-const { query } = require('express');
+// const { query } = require('express');
+
+const PORT = 3000;
+
 
 var con = mysql.createConnection({
     host: "db",
@@ -39,7 +41,6 @@ con.connect(function(err) {
         sqlQuery("CREATE TABLE `foundLog` (`id` int NOT NULL AUTO_INCREMENT,`duckId` int NOT NULL,`date` datetime NOT NULL,`ip` varchar(20) DEFAULT NULL,PRIMARY KEY (`id`),UNIQUE KEY `id_UNIQUE` (`id`)) ENGINE=InnoDB DEFAULT CHARSET=ascii;");
 
         // read ducks.txt and insert them into ducks table
-        
         var array = fs.readFileSync('/app/ducks.txt').toString().split("\n");
         for(i in array) {
             sqlQuery("INSERT INTO names (id, name) VALUES (" + i + ", '" + array[i] + "');");
@@ -47,11 +48,6 @@ con.connect(function(err) {
 
         console.log("ready for requests")
     }
-
-    
-
-
-
 
     //check if /var/lib/mysql/DuckDB exists
     fs.access("/var/lib/mysql/DuckDB", function(error) {
@@ -62,24 +58,11 @@ con.connect(function(err) {
             console.log("Directory exists.")
 
             console.log("ready for requests")
-            // sqlQuery("USE DuckDB");
-            // ducks = (sqlQuery("SELECT name FROM names"));
-            // console.log(ducks);
-
-
-            // con.query("SELECT name FROM DuckDB.names", function (err, result, fields) {
-            //     if (err) throw err;
-            //     console.log(result);
-            // });
         }
     })
-
-   
-
 });
 
 
-const PORT = 3000;
 
 var app = express();
 
@@ -93,8 +76,24 @@ app.get("/duck/",function(req,res){
             con.query("SELECT * FROM DuckDB.names WHERE id = '"+req.query.id+"'", function (err, result, fields) {
                 if (err) throw err;
                 if (result.length==1){
-                    console.log(result[0])
-                    res.send(result[0].name);
+                    duckName=result[0].name
+
+                    //duck exists
+                    con.query("SELECT name FROM DuckDB.foundLog LEFT JOIN DuckDB.names ON DuckDB.foundLog.duckId = WHERE duckID = DuckDB.names.id'"+req.query.id+"'", function (err, result, fields) {
+                        if (err) throw err;
+                        if (result.length<1){
+                            res.send("you're the first person to find "+duckName+"!")
+
+                            date=new Date().toISOString().slice(0, 19).replace('T', ' ')
+                            con.query("INSERT INTO DuckDB.foundLog (duckId, date) VALUES ('" + req.query.id + "', '" + date + "');");
+                        }
+                        else{
+                            res.send(result)
+                            date=new Date().toISOString().slice(0, 19).replace('T', ' ')
+                            con.query("INSERT INTO DuckDB.foundLog (duckId, date) VALUES ('" + req.query.id + "', '" + date + "');");
+                        }
+                    });
+                    // res.send(duckName);
                 }
                 else{
                     res.send("invalid duck")
