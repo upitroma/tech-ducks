@@ -1,6 +1,7 @@
 const express = require('express');
 
 var mysql = require('mysql');
+var fs = require('fs');
 
 var con = mysql.createConnection({
     host: "db",
@@ -11,6 +12,67 @@ var con = mysql.createConnection({
 con.connect(function(err) {
     if (err) throw err;
     console.log("Connected to database!");
+
+
+    function sqlQuery(sql) {
+        con.query(sql, function (err, result) {
+            if (err){
+                throw err;
+            } 
+            return result;
+        });
+    }
+
+    function createDatabase(){
+
+        sqlQuery("CREATE DATABASE DuckDB");
+
+        sqlQuery("USE DuckDB");
+
+        // createDuckTable.sql
+        sqlQuery("CREATE TABLE `names` (`id` int NOT NULL,`name` varchar(200) NOT NULL,`originalLocation` varchar(200) DEFAULT NULL,PRIMARY KEY (`id`),UNIQUE KEY `id_UNIQUE` (`id`),UNIQUE KEY `name_UNIQUE` (`name`)) ENGINE=InnoDB DEFAULT CHARSET=ascii;");
+        
+        // createFoundLog.sql
+        sqlQuery("CREATE TABLE `foundLog` (`id` int NOT NULL AUTO_INCREMENT,`duckId` int NOT NULL,`date` datetime NOT NULL,`ip` varchar(20) DEFAULT NULL,PRIMARY KEY (`id`),UNIQUE KEY `id_UNIQUE` (`id`)) ENGINE=InnoDB DEFAULT CHARSET=ascii;");
+
+        // read ducks.txt and insert them into ducks table
+        
+        var array = fs.readFileSync('ducks.txt').toString().split("\n");
+        for(i in array) {
+            sqlQuery("INSERT INTO names (id, name) VALUES (" + i + ", '" + array[i] + "');");
+        }
+    }
+
+    
+
+
+
+
+    //check if /var/lib/mysql/DuckDB exists
+    fs.access("/var/lib/mysql/DuckDB", function(error) {
+        if (error) {
+          console.log("Directory does not exist.")
+          createDatabase();
+        } else {
+          console.log("Directory exists.")
+          sqlQuery("USE DuckDB");
+            ducks = (sqlQuery("SELECT name FROM names"));
+            console.log(ducks[0]);
+        }
+      })
+
+    con.query("USE DuckDB", function (err, result) {
+        if (err){
+            console.log("error");
+            createDatabase();
+        } 
+        else{
+            console.log("no error")
+            sqlQuery("USE DuckDB");
+            console.log("ready for requests");
+        }
+    });
+
 });
 
 
@@ -23,7 +85,11 @@ app.get("/duck/",function(req,res){
         res.send("this should redirect to some statistics page");
     }
     else{
-        res.send("your id is "+req.query.id);
+        con.query("SELECT name FROM names", function (err, result, fields) {
+            if (err) throw err;
+            res.send(result);
+        });
+        // res.send("your id is "+req.query.id);
     }
 });
 
