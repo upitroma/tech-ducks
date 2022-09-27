@@ -43,6 +43,8 @@ con.connect(function(err) {
         for(i in array) {
             sqlQuery("INSERT INTO names (id, name) VALUES (" + i + ", '" + array[i] + "');");
         }
+
+        console.log("ready for requests")
     }
 
     
@@ -57,15 +59,17 @@ con.connect(function(err) {
             createDatabase();
         } else {
             console.log("Directory exists.")
+
+            console.log("ready for requests")
             // sqlQuery("USE DuckDB");
             // ducks = (sqlQuery("SELECT name FROM names"));
             // console.log(ducks);
 
 
-            con.query("SELECT name FROM DuckDB.names", function (err, result, fields) {
-                if (err) throw err;
-                console.log(result);
-            });
+            // con.query("SELECT name FROM DuckDB.names", function (err, result, fields) {
+            //     if (err) throw err;
+            //     console.log(result);
+            // });
         }
     })
 
@@ -83,9 +87,11 @@ app.get("/duck/",function(req,res){
         res.send("this should redirect to some statistics page");
     }
     else{
-        con.query("SELECT name FROM names", function (err, result, fields) {
+        // TODO: fix sql injection
+        con.query("SELECT name FROM DuckDB.names WHERE id = "+req.query.id, function (err, result, fields) {
             if (err) throw err;
-            res.send(result);
+            console.log(result[0].name)
+            res.send(result[0].name);
         });
         // res.send("your id is "+req.query.id);
     }
