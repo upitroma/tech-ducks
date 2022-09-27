@@ -1,5 +1,5 @@
 CREATE TABLE `names` (
-  `id` int NOT NULL,
+  `id` varchar(200) NOT NULL,
   `name` varchar(200) NOT NULL,
   `originalLocation` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`id`),
