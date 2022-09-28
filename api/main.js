@@ -66,7 +66,7 @@ con.connect(function(err) {
 
 var app = express();
 
-app.get("/duck/",function(req,res){
+app.get("/api/",function(req,res){
     if(!req.query.id){
         res.send("this should redirect to some statistics page");
     }
