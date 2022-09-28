@@ -1,1 +1,27 @@
-static site test
+<!DOCTYPE html>
+<html>
+<body>
+    <h1 id="title">Loading Duck...</h1>
+    <ul id="foundLog"></li>
+</body>
+
+<script>
+    const title = document.getElementById('title');
+    const foundLog = document.getElementById('foundLog');
+
+    // call api on port 8080
+    fetch('http://localhost:8080/api?id=1')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            title.innerHTML = data.duckName;
+            log="";
+            for (i in data.foundLog){
+                date= new Date(data.foundLog[i].date)
+                date=date.getMonth()+"/"+date.getDate()+"/"+date.getFullYear()+" "+date.toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3")
+                log += "<li>" + date + "</li>";
+            }
+            foundLog.innerHTML = log;
+    });
+
+</script>
