@@ -4,7 +4,6 @@ var fs = require('fs');
 var cors = require('cors');
 
 const PORT = 3000;
-const DOMAIN = 'localhost';
 
 
 var con = mysql.createConnection({
@@ -12,6 +11,15 @@ var con = mysql.createConnection({
     user: "root",
     password: "P@ssw0rd"
 });
+
+function randomId(){
+    possible="abcdefghijklmnopqrstuvwxyz0123456789";
+    id="";
+    for(j=0;j<20;j++){
+        id+=possible.charAt(Math.floor(Math.random()*possible.length));
+    }
+    return id;
+}
 
 con.connect(function(err) {
     if (err) throw err;
@@ -39,13 +47,26 @@ con.connect(function(err) {
         sqlQuery("CREATE TABLE `names` (`id` varchar(200) NOT NULL,`name` varchar(200) NOT NULL,`originalLocation` varchar(200) DEFAULT NULL,PRIMARY KEY (`id`),UNIQUE KEY `id_UNIQUE` (`id`),UNIQUE KEY `name_UNIQUE` (`name`)) ENGINE=InnoDB DEFAULT CHARSET=ascii;");
         
         // createFoundLog.sql
-        sqlQuery("CREATE TABLE `foundLog` (`id` int NOT NULL AUTO_INCREMENT,`duckId` int NOT NULL,`date` datetime NOT NULL,`ip` varchar(20) DEFAULT NULL,PRIMARY KEY (`id`),UNIQUE KEY `id_UNIQUE` (`id`)) ENGINE=InnoDB DEFAULT CHARSET=ascii;");
+        sqlQuery("CREATE TABLE `foundLog` (`id` int NOT NULL AUTO_INCREMENT,`duckId` varchar(200) NOT NULL,`date` datetime NOT NULL,`ip` varchar(20) DEFAULT NULL,PRIMARY KEY (`id`),UNIQUE KEY `id_UNIQUE` (`id`)) ENGINE=InnoDB DEFAULT CHARSET=ascii;");
 
         // read ducks.txt and insert them into ducks table
+        // also keep track of the duck names and their generated ids
         var array = fs.readFileSync('/app/ducks.txt').toString().split("\n");
-        for(i in array) {
-            sqlQuery("INSERT INTO names (id, name) VALUES (" + i + ", '" + array[i] + "');");
+        var duckLookup = [];
+
+        console.log(array)
+        console.log(array.length)
+
+        for(i=0;i<array.length;i++) {
+            r=randomId();
+            // r=i;
+            sqlQuery("INSERT INTO names (id, name) VALUES ('" + r + "', '" + array[i] + "');");
+            duckLookup.push({id: r, name: array[i]});
+            console.log(i);
         }
+
+        console.log(duckLookup);
+        
 
         console.log("ready for requests")
     }
@@ -81,7 +102,7 @@ app.get("/api/",function(req,res){
                     duckName=result[0].name
 
                     //duck exists
-                    con.query("SELECT * FROM DuckDB.foundLog WHERE duckID = '"+req.query.id+"'", function (err, result, fields) {
+                    con.query("SELECT date FROM DuckDB.foundLog WHERE duckID = '"+req.query.id+"'", function (err, result, fields) {
                         if (err) throw err;
                         if (result.length<1){
                             res.send({"duckName":duckName,"foundLog":[]});
@@ -97,17 +118,14 @@ app.get("/api/",function(req,res){
 
                         }
                     });
-                    // res.send(duckName);
                 }
                 else{
-                    res.send("invalid duck")
-                }
-                console.log(result.length)
-                
+                    res.status(404).send({"duckName":"ERR: INVALID_DUCK","foundLog":[]})
+                }                
             });
         }
         else{
-            res.send("invalid duck")
+            res.status(404).send({"duckName":"ERR: INVALID_DUCK","foundLog":[]})
         }
 
         // res.send("your id is "+req.query.id);

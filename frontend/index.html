@@ -9,8 +9,12 @@
     const title = document.getElementById('title');
     const foundLog = document.getElementById('foundLog');
 
+    const urlParams = new URLSearchParams(location.search);
+
+    duckID = urlParams.get('id');
+
     // call api on port 8080
-    fetch('http://localhost:8080/api?id=1')
+    fetch('http://localhost:8080/api?id=' + duckID)
         .then(response => response.json())
         .then(data => {
             console.log(data);
