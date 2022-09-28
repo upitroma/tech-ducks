@@ -71,7 +71,7 @@ app.get("/duck/",function(req,res){
         res.send("this should redirect to some statistics page");
     }
     else{
-        // TODO: fix sql injection
+        //fix sql injection
         if (req.query.id.match(/^[0-9a-zA-Z]+$/)){
             con.query("SELECT * FROM DuckDB.names WHERE id = '"+req.query.id+"'", function (err, result, fields) {
                 if (err) throw err;
@@ -79,7 +79,7 @@ app.get("/duck/",function(req,res){
                     duckName=result[0].name
 
                     //duck exists
-                    con.query("SELECT name FROM DuckDB.foundLog LEFT JOIN DuckDB.names ON DuckDB.foundLog.duckId = WHERE duckID = DuckDB.names.id'"+req.query.id+"'", function (err, result, fields) {
+                    con.query("SELECT * FROM DuckDB.foundLog WHERE duckID = '"+req.query.id+"'", function (err, result, fields) {
                         if (err) throw err;
                         if (result.length<1){
                             res.send("you're the first person to find "+duckName+"!")
@@ -88,9 +88,11 @@ app.get("/duck/",function(req,res){
                             con.query("INSERT INTO DuckDB.foundLog (duckId, date) VALUES ('" + req.query.id + "', '" + date + "');");
                         }
                         else{
-                            res.send(result)
+                            res.send("You've found "+duckName+"! "+duckName+" has not been found since "+result[result.length-1].date+". So far "+result.length+" other people have found this duck.")
+
                             date=new Date().toISOString().slice(0, 19).replace('T', ' ')
                             con.query("INSERT INTO DuckDB.foundLog (duckId, date) VALUES ('" + req.query.id + "', '" + date + "');");
+
                         }
                     });
                     // res.send(duckName);
