@@ -33,8 +33,8 @@ Robert
 Richard
 Thomas
 Charles
-George
-Larry
+John
+Arthur
 Phillip
 Sam
 Adam
@@ -62,8 +62,39 @@ Applesauce
 Mr Game and Watch
 Mr. Krabs
 Yhorm
-Hornet
-Cornifer
 Senator Armstrong
 GLaDOS
 Turnip Boy
+Buddy
+Charlie
+Alphonso
+Tom
+Jerry
+Hornet
+Cornifer
+Oro
+Mato
+Sheo
+Sly
+Quirrel
+Zote
+Olimar
+Your Mom
+Blaze
+Dandelion
+Hazel
+Dog
+Lucky
+Webster
+Tinkerbill
+Quackalmore
+Peanut
+Bubbles
+Pipsqueak
+Cookie
+Cheddar
+Suds
+Duckota
+Pebbles
+9S
+Bandit
