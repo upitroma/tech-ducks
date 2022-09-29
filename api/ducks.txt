@@ -1,3 +1,4 @@
+Quack Sparrow
 Huey
 Dewey
 Louie
@@ -5,7 +6,6 @@ Quackerjack
 Bill
 Duckleberry Fin
 Duck Norris
-Quack Sparrow
 Waddles
 Daffy
 Daisy
@@ -25,3 +25,45 @@ Buckbeak
 Tweety
 Quack n Cheese
 Eggspresso
+Creg
+Steve
+Mary
+Quincy
+Robert
+Richard
+Thomas
+Charles
+George
+Larry
+Phillip
+Sam
+Adam
+Lane
+Chris
+Nate
+Karen
+Samantha
+Patricia
+Jennifer
+Helen
+Marguerit
+Riley
+Avery
+Peyton
+Ryan
+Isaac
+Methanol
+Vordt
+Mort
+King Julien
+Dr Heinz Doofenshmirtz
+Perry the Platypus
+Applesauce
+Mr Game and Watch
+Mr. Krabs
+Yhorm
+Hornet
+Cornifer
+Senator Armstrong
+GLaDOS
+Turnip Boy
