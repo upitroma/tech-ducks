@@ -1,7 +1,24 @@
 body {
-    background: white;
-    color: black;
+    background: black;
+    color: white;
+    text-align: center;
+}
+p{
+    font-size: 2rem;
+}
+ul{
+    text-align: center;
 }
 h1{
     background-color: orange;
+    color: black;
+    margin:auto;
+    font-size: 3rem;
+}
+img{
+    max-width: 60vw;
+    max-height: 40vh;
+    height: auto;
+    padding: 10px;
+    /* max-width: 10rem; */
 }
