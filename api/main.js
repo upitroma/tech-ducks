@@ -98,25 +98,29 @@ app.get("/api/",function(req,res){
         if (req.query.id.match(/^[0-9a-zA-Z]+$/)){
             con.query("SELECT * FROM DuckDB.names WHERE id = '"+req.query.id+"'", function (err, result, fields) {
                 if (err) throw err;
+
+                //if duck exists
                 if (result.length==1){
                     duckName=result[0].name
 
-                    //duck exists
-                    con.query("SELECT date FROM DuckDB.foundLog WHERE duckID = '"+req.query.id+"'", function (err, result, fields) {
+                    //get number of ducks not found yet
+                    con.query("SELECT name FROM DuckDB.names WHERE id NOT IN (SELECT duckId FROM DuckDB.foundLog)", function (err, result, fields) {
                         if (err) throw err;
-                        if (result.length<1){
-                            res.send({"duckName":duckName,"foundLog":[]});
+
+                        ducksNotFound=result.length;
+                    
+                        con.query("SELECT date FROM DuckDB.foundLog WHERE duckID = '"+req.query.id+"'", function (err, result, fields) {
+                            if (err) throw err;
+                            if (result.length<1){
+                                res.send({"duckName":duckName,"foundLog":[],"ducksNotFound":ducksNotFound-1});                            
+                            }
+                            else{
+                                res.send({"duckName":duckName,"foundLog":result,"ducksNotFound":ducksNotFound});
+                            }
 
                             date=new Date().toISOString().slice(0, 19).replace('T', ' ')
                             con.query("INSERT INTO DuckDB.foundLog (duckId, date) VALUES ('" + req.query.id + "', '" + date + "');");
-                        }
-                        else{
-                            res.send({"duckName":duckName,"foundLog":result});
-
-                            date=new Date().toISOString().slice(0, 19).replace('T', ' ')
-                            con.query("INSERT INTO DuckDB.foundLog (duckId, date) VALUES ('" + req.query.id + "', '" + date + "');");
-
-                        }
+                        });
                     });
                 }
                 else{

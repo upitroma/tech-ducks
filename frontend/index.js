@@ -1,6 +1,7 @@
 const title = document.getElementById('title');
 const pageTitle = document.getElementById('pageTitle');
-const desc = document.getElementById('desc');
+const foundCount = document.getElementById('foundCount');
+const desc = document.getElementById('remainingCount');
 const foundLog = document.getElementById('foundLog');
 const info = document.getElementById('info');
 
@@ -26,12 +27,15 @@ fetch('http://localhost:8080/api?id=' + duckID)
                 title.innerHTML = "You found "+data.duckName+"!";
                 pageTitle.innerHTML = "You found "+data.duckName+"!";
 
-                //set description
+                //set foundCount
                 if(data.foundLog.length == 0){
-                    desc.innerHTML = "You are the first person to find "+data.duckName+"!";
+                    foundCount.innerHTML = "You are the first person to find "+data.duckName+"!";
                 } else {
-                    desc.innerHTML = data.duckName+" was found a total of " + data.foundLog.length + " times.";
+                    foundCount.innerHTML = data.duckName+" was found a total of " + data.foundLog.length + " times.";
                 }
+
+                //set remainingCount
+                remainingCount.innerHTML = "There are 100 ducks in total. Currently, " + data.ducksNotFound + " ducks have yet to be found.";
 
                 //set log
                 log="";
