@@ -1,5 +1,12 @@
 body {
-    background: black;
+    background-color: black;
+    background-image: url("./duckBg.png");
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+
+
+
     color: white;
     text-align: center;
 }
