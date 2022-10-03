@@ -90,8 +90,12 @@ var app = express();
 app.use(cors());
 
 app.get("/api/",function(req,res){
-    if(!req.query.id){
-        res.send("this should redirect to some statistics page");
+    if(!req.query.id || req.query.id=="null"){
+        con.query("SELECT name FROM DuckDB.names WHERE id IN (SELECT duckId FROM DuckDB.foundLog)",function(err,result,fields){
+            if(err) throw err;
+            res.send({"ducks":result});
+        });
+        // res.send("this should redirect to some statistics page");
     }
     else{
         //fix sql injection
