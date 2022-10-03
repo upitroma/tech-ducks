@@ -1,11 +1,12 @@
 const title = document.getElementById('title');
 const pageTitle = document.getElementById('pageTitle');
 const foundCount = document.getElementById('foundCount');
-const desc = document.getElementById('remainingCount');
+const remainingCount = document.getElementById('remainingCount');
 const foundLog = document.getElementById('foundLog');
 const info = document.getElementById('info');
 const foundDucks = document.getElementById('foundDucks');
 const foundDucksList = document.getElementById('foundDucksList');
+const foundDucksRemainingCount = document.getElementById('foundDucksRemainingCount');
 
 const urlParams = new URLSearchParams(location.search);
 
@@ -24,6 +25,8 @@ fetch('http://localhost:8080/api?id=' + duckID)
             console.log(data.ducks)
 
             if (responseCode == 200) {
+
+                // if duck found
                 if(data.duckName){
                     info.hidden=false;
                 
@@ -51,9 +54,12 @@ fetch('http://localhost:8080/api?id=' + duckID)
                     foundLog.innerHTML = log;
                 }
                 else if(data.ducks){
+                    foundDucks.hidden=false;
+
                     pageTitle.innerHTML = "Found Ducks";
                     title.innerHTML = "Found Ducks";
-                    foundDucks.hidden=false;
+                    foundDucksRemainingCount.innerHTML = "("+data.ducks.length+"/"+data.totalCount+") Ducks have been found.";
+                    
                     foundDucksList.innerHTML=data.ducks.map(duck => `<li>${duck.name}</li>`).join('');
                 }
             }

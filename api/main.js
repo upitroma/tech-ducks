@@ -91,15 +91,26 @@ app.use(cors());
 
 app.get("/api/",function(req,res){
     if(!req.query.id || req.query.id=="null"){
-        con.query("SELECT name FROM DuckDB.names WHERE id IN (SELECT duckId FROM DuckDB.foundLog)",function(err,result,fields){
-            if(err) throw err;
-            res.send({"ducks":result});
+
+        // count total ducks
+        con.query("SELECT COUNT(*) AS count FROM DuckDB.names", function (err, result) {
+
+            // console.log(result[0].count)
+            totalCount = result[0].count;
+        
+            // get found ducks
+            con.query("SELECT name FROM DuckDB.names WHERE id IN (SELECT duckId FROM DuckDB.foundLog)",function(err,result,fields){
+                if(err) throw err;
+                res.send({"ducks":result,"totalCount":totalCount});
+            });
         });
         // res.send("this should redirect to some statistics page");
     }
     else{
         //fix sql injection
         if (req.query.id.match(/^[0-9a-zA-Z]+$/)){
+
+            //select duck
             con.query("SELECT * FROM DuckDB.names WHERE id = '"+req.query.id+"'", function (err, result, fields) {
                 if (err) throw err;
 
@@ -112,7 +123,8 @@ app.get("/api/",function(req,res){
                         if (err) throw err;
 
                         ducksNotFound=result.length;
-                    
+                        
+
                         con.query("SELECT date FROM DuckDB.foundLog WHERE duckID = '"+req.query.id+"'", function (err, result, fields) {
                             if (err) throw err;
                             if (result.length<1){
