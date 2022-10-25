@@ -99,7 +99,8 @@ app.get("/api/",function(req,res){
             totalCount = result[0].count;
         
             // get found ducks
-            con.query("SELECT name FROM DuckDB.names WHERE id IN (SELECT duckId FROM DuckDB.foundLog)",function(err,result,fields){
+            // con.query("SELECT name FROM DuckDB.names WHERE id IN (SELECT duckId FROM DuckDB.foundLog)",function(err,result,fields){
+            con.query("select distinct name from DuckDB.names right join DuckDB.foundLog on DuckDB.names.id = DuckDB.foundLog.duckId",function(err,result,fields){
                 if(err) throw err;
                 res.send({"ducks":result,"totalCount":totalCount});
             });
