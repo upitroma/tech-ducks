@@ -27,3 +27,19 @@ img{
     height: auto;
     padding: 10px;
 }
+ol {
+    align-items: center;
+    display: inline-block;
+    background: rgba(0,0,0,.5);
+}
+ol li  {
+    display: list-item;
+    text-align: left;
+    z-index: 2;
+    top: 0;
+    max-width: length;
+    height: 100%;
+    margin: 1em;
+    
+    color: #fff;
+  }
