@@ -47,21 +47,20 @@ con.connect(function(err) {
         sqlQuery("CREATE TABLE `names` (`id` varchar(200) NOT NULL,`name` varchar(200) NOT NULL,`originalLocation` varchar(200) DEFAULT NULL,PRIMARY KEY (`id`),UNIQUE KEY `id_UNIQUE` (`id`),UNIQUE KEY `name_UNIQUE` (`name`)) ENGINE=InnoDB DEFAULT CHARSET=ascii;");
         
         // createFoundLog.sql
-        sqlQuery("CREATE TABLE `foundLog` (`id` int NOT NULL AUTO_INCREMENT,`duckId` varchar(200) NOT NULL,`date` datetime NOT NULL,`ip` varchar(20) DEFAULT NULL,PRIMARY KEY (`id`),UNIQUE KEY `id_UNIQUE` (`id`)) ENGINE=InnoDB DEFAULT CHARSET=ascii;");
+        sqlQuery("CREATE TABLE `foundLog` (`id` int NOT NULL AUTO_INCREMENT,`duckId` varchar(200) NOT NULL,`date` datetime NOT NULL,`initials` varchar(3) DEFAULT NULL,PRIMARY KEY (`id`),UNIQUE KEY `id_UNIQUE` (`id`)) ENGINE=InnoDB DEFAULT CHARSET=ascii;");
 
         // read ducks.txt and insert them into ducks table
         // also keep track of the duck names and their generated ids
-        var array = fs.readFileSync('/app/ducks.txt').toString().split("\n");
+        var names = fs.readFileSync('/app/ducks.txt').toString().split("\n");
         var duckLookup = [];
 
-        console.log(array)
-        console.log(array.length)
+        console.log(names)
 
-        for(i=0;i<array.length;i++) {
+        for(i=0;i<names.length;i++) {
             r=randomId();
             // r=i;
-            sqlQuery("INSERT INTO names (id, name) VALUES ('" + r + "', '" + array[i] + "');");
-            duckLookup.push({id: r, name: array[i]});
+            sqlQuery("INSERT INTO names (id, name) VALUES ('" + r + "', '" + names[i] + "');");
+            duckLookup.push({id: r, name: names[i]});
             console.log(i);
         }
 
@@ -90,7 +89,14 @@ var app = express();
 app.use(cors());
 
 app.get("/api/",function(req,res){
-    if(!req.query.id || req.query.id=="null"){
+    if(req.query.initials!="null" && req.query.initials){
+        // initials must only consist of 3 letters
+        if (req.query.initials.match(/^[0-9a-zA-Z]{3}$/)){
+            initials=req.query.initials;
+            console.log(initials)
+        }
+    }
+    else if(!req.query.id || req.query.id=="null"){
 
         // count total ducks
         con.query("SELECT COUNT(*) AS count FROM DuckDB.names", function (err, result) {
@@ -105,7 +111,6 @@ app.get("/api/",function(req,res){
                 res.send({"ducks":result,"totalCount":totalCount});
             });
         });
-        // res.send("this should redirect to some statistics page");
     }
     else{
         //fix sql injection
@@ -148,8 +153,6 @@ app.get("/api/",function(req,res){
         else{
             res.status(404).send({"duckName":"ERR: INVALID_DUCK","foundLog":[]})
         }
-
-        // res.send("your id is "+req.query.id);
     }
 });
 
