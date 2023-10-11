@@ -5,4 +5,4 @@ now if you go to http://duck.indianatech.org it shows how many ducks have been f
 https://github.com/upitroma/tech-ducks
 
 ## to run
-docker-compose up -d
+`docker-compose up -d`
