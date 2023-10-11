@@ -3,3 +3,6 @@ I bought indianatech.org from google domains and 100 ducks on amazon and stuck q
 I then got some friends to hide these ducks across campus.
 now if you go to http://duck.indianatech.org it shows how many ducks have been found.
 https://github.com/upitroma/tech-ducks
+
+## to run
+docker-compose up -d
